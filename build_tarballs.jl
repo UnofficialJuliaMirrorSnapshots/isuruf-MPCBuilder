@@ -15,8 +15,12 @@ sources = [
 script = """cd mpc-$version
 """*raw"""
 ./configure --prefix=$prefix --host=$target --enable-shared --disable-static --with-gmp=$prefix --with-mpfr=$prefix
-make
+make -j
 make install
+# On Windows, make sure non-versioned filename exists...
+if [[ ${target} == *mingw* ]]; then
+    cp -v ${prefix}/bin/libmpc-*.dll ${prefix}/bin/libmpc.dll
+fi
 """
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
@@ -29,8 +33,8 @@ products(prefix) = [
 
 # Dependencies that must be installed before this package can be built
 dependencies = [
-    "https://github.com/JuliaMath/GMPBuilder/releases/download/v6.1.2-2/build_GMP.v6.1.2.jl"
-    "https://github.com/JuliaMath/MPFRBuilder/releases/download/v4.0.1-3/build_MPFR.v4.0.1.jl"
+    "https://github.com/JuliaPackaging/Yggdrasil/releases/download/GMP-v6.1.2-1/build_GMP.v6.1.2.jl"
+    "https://github.com/JuliaPackaging/Yggdrasil/releases/download/MPFR-v4.0.2-0/build_MPFR.v4.0.2.jl"
 ]
 
 # Build the tarballs, and possibly a `build.jl` as well.
